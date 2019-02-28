@@ -7,7 +7,7 @@
     </parent>
 
     <artifactId>radargun</artifactId>
-    <version>1.7-SNAPSHOT</version>
+    <version>1.7.1-SNAPSHOT</version>
     <packaging>hpi</packaging>
     <name>RadarGun</name>
     <url>http://wiki.jenkins-ci.org/display/JENKINS/RadarGun+plugin</url>
@@ -20,6 +20,10 @@
         <developer>
             <id>dlovison</id>
             <name>Diego Lovison</name>
+        </developer>
+        <developer>
+            <id>glira</id>
+            <name>Gustavo Lira</name>
         </developer>
     </developers>
 

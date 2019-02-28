@@ -55,6 +55,7 @@ public class RadarGunBuilder extends Builder {
     private final String pluginPath;
     private final String pluginConfigPath;
     private final String reporterPath;
+    ConsoleLogger console;
 
     @DataBoundConstructor
     public RadarGunBuilder(RadarGunInstance radarGunInstance, ScenarioSource scenarioSource, NodeConfigSource nodeSource,
@@ -131,10 +132,12 @@ public class RadarGunBuilder extends Builder {
             throws InterruptedException, IOException {
 
         Resolver.init(build);
-        ConsoleLogger console = new ConsoleLogger(listener);
+        console = new ConsoleLogger(listener);
         
         RadarGunInstallation rgInstall = Functions.getRgInstallation(radarGunInstance);
-            
+        console.logAnnot("####");
+        console.logAnnot(rgInstall.getHome());
+
         build.addAction(new RadarGunInvisibleAction(rgInstall.getHome()));
 
         NodeList nodes = nodeSource.getNodesList(launcher.getChannel());
@@ -153,6 +156,7 @@ public class RadarGunBuilder extends Builder {
         ExecutorService executorService = null;
         try {
             rgProcesses = prepareRgProcesses(rgBuild);
+
             executorService = Executors.newFixedThreadPool(rgProcesses.size());
             for (RgProcess process : rgProcesses) {
                 process.start(executorService);
@@ -168,6 +172,20 @@ public class RadarGunBuilder extends Builder {
     }
 
     private List<RgProcess> prepareRgProcesses(RgBuild rgBuild) {
+        console.logAnnot("####");
+        console.logAnnot(rgBuild.getRgInstall().getHome());
+        console.logAnnot(rgBuild.getNodes().getMaster().getName());
+        console.logAnnot(rgBuild.getNodes().getMaster().getJvmOptions());
+        console.logAnnot(rgBuild.getNodes().getMaster().getAllJavaOpts());
+        console.logAnnot(String.valueOf(rgBuild.getNodes().getMaster().isMaster()));
+        List<Node> nodes = rgBuild.getNodes().asList();
+        for(Node n: nodes) {
+            console.log(n.getEnvVars().values().toString());
+            console.log(n.getAllJavaOpts());
+            console.log(n.getJavaPropsWithPrefix());
+        }
+        console.logAnnot(String.valueOf(rgBuild.getNodes().getSlaveCount()));
+
         List<RgProcess> rgProcesses = new ArrayList<RgProcess>(rgBuild.getNodes().getNodeCount());
         rgProcesses.add(new RgMasterProcessImpl(rgBuild));
         List<Node> slaves = rgBuild.getNodes().getSlaves();
@@ -285,7 +303,7 @@ public class RadarGunBuilder extends Builder {
             return lb;
         }
 
-        public static DescriptorExtensionList<RadarGunInstance, Descriptor<RadarGunInstance>> getRgInstances() {
+        public static DescriptorExtensionList<RadarGunInstance, Descriptor<RadarGunInstance>> si() {
             return RadarGunInstance.all();
         }
         
